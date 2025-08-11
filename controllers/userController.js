@@ -1,5 +1,5 @@
-import User from '../models/userModel.js';
-import generateToken from '../utils/generateToken.js';
+import User from "../models/userModel.js";
+import generateToken from "../utils/generateToken.js";
 
 // @desc    Auth user & get token (Login)
 // @route   POST /api/users/login
@@ -9,19 +9,21 @@ const authUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-      generateToken(res, user._id);
+      // Generate JWT and set as cookie
+      const token = generateToken(res, user._id);
       res.status(200).json({
         _id: user._id,
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
+        token: token,
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (error) {
-    console.error('💥 ERROR IN authUser:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("💥 ERROR IN authUser:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -38,7 +40,7 @@ const registerUser = async (req, res) => {
     const userExists = await User.findOne({ email: normalizedEmail });
 
     if (userExists) {
-      res.status(400).json({ message: 'User already exists' });
+      res.status(400).json({ message: "User already exists" });
       return; // এখানে কোড শেষ করে দেওয়া হচ্ছে
     }
 
@@ -54,21 +56,22 @@ const registerUser = async (req, res) => {
 
     if (createdUser) {
       // টোকেন তৈরি করা এবং রেসপন্স পাঠানো
-      generateToken(res, createdUser._id);
+      const token = generateToken(res, createdUser._id);
       res.status(201).json({
         _id: createdUser._id,
         name: createdUser.name,
         email: createdUser.email,
         isAdmin: createdUser.isAdmin,
+        token: token,
       });
     } else {
       // যদি কোনো কারণে ইউজার তৈরি না হয়
-      res.status(400).json({ message: 'Invalid user data' });
+      res.status(400).json({ message: "Invalid user data" });
     }
   } catch (error) {
     // যেকোনো অপ্রত্যাশিত ইরর ধরার জন্য এবং টার্মিনালে দেখানোর জন্য
-    console.error('💥 ERROR IN registerUser:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("💥 ERROR IN registerUser:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -86,11 +89,11 @@ const getUserProfile = async (req, res) => {
         isAdmin: user.isAdmin,
       });
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    console.error('💥 ERROR IN getUserProfile:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("💥 ERROR IN getUserProfile:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -118,11 +121,11 @@ const updateUserProfile = async (req, res) => {
         isAdmin: updatedUser.isAdmin,
       });
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    console.error('💥 ERROR IN updateUserProfile:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("💥 ERROR IN updateUserProfile:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
