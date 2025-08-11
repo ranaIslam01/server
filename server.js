@@ -21,7 +21,7 @@ const app = express();
 // CORS middleware
 app.use(cors({
   origin: [
-    'https://ecommerce-rana-islam.vercel.app',
+    'https://client-flame-chi.vercel.app/',
     'http://localhost:3000'
   ],
   credentials: true,
